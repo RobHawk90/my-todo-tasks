@@ -1,0 +1,40 @@
+{
+  "name": "my-todo-tasks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "set NODE_ENV=production&&node index.js",
+    "test": "set NODE_ENV=development&&mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobHawk90/my-todo-tasks.git"
+  },
+  "keywords": [
+    "javascript",
+    "todo",
+    "tasks",
+    "mean"
+  ],
+  "author": "RobHawk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RobHawk90/my-todo-tasks/issues"
+  },
+  "homepage": "https://github.com/RobHawk90/my-todo-tasks#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "consign": "^0.1.2",
+    "express": "^4.14.0",
+    "express-validator": "^3.0.0",
+    "jsonwebtoken": "^7.2.0",
+    "mongoose": "^4.7.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "database-cleaner": "^1.2.0",
+    "mocha": "^3.2.0",
+    "supertest": "^2.0.1"
+  }
+}
