@@ -1,4 +1,4 @@
-require('../config/mongodb.js')
+let mongoose = require('../config/mongodb.js')
 let express = require('express')
 let bodyParser = require('body-parser')
 let expressValidator = require('express-validator')
@@ -8,7 +8,8 @@ let app = express()
 app.use(bodyParser.json())
   .use(expressValidator({
     customValidators: {
-      isPassword: value => /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9]{8,})$/.test(value)
+      isPassword: value => /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9]{8,})$/.test(value),
+      isObjectId: value => mongoose.Types.ObjectId.isValid(value)
     }
   }))
 

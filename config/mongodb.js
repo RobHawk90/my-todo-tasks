@@ -13,4 +13,4 @@ let db = mongoose.connection
 db.on('disconnected', () => console.log('disconnected from mongodb'))
 db.on('error', error => console.log(`mongodb error ${error}`))
 
-module.exports = () => db
+module.exports = mongoose
