@@ -98,7 +98,7 @@ describe("#TaskController", () => {
       let Task = mongoose.model('Task')
 
       Task.remove({})
-        .then(() => Task.create(task))
+        .then(() => {return Task.create(task)})
         .then(taskCreated => {
           task = taskCreated
           done()
@@ -125,7 +125,7 @@ describe("#TaskController", () => {
         .send(task)
         .end((err, res) => {
           expect(res.status).to.equal(400)
-          expect(res.body[0].msg).to.equal('"invalidId" is an invalid ObjectId')
+          expect(res.body[0].msg).to.equal('"invalidId" is an invalid ObjectId.')
           done(err)
         })
     })
@@ -169,6 +169,41 @@ describe("#TaskController", () => {
         })
     })
 
+  })
+
+  describe('-remove', () => {
+    let task = {}
+
+    before(done => {
+      task.description = 'testing delete'
+      task.date = '2016-12-23'
+      task.userId = user.id
+
+      let Task = mongoose.model('Task')
+
+      Task.create(task)
+        .then(taskCreated => {
+          task = taskCreated
+          done()
+        })
+        .catch(done)
+    })
+
+    it('deletes an existing task', done => {
+      client.delete(`/api/tasks/${task.id}`)
+        .set('x-access-token', user.token)
+        .expect(204, done)
+    })
+
+    it('checks for invalid id', done => {
+      client.delete(`/api/tasks/1a2s3d4q`)
+        .set('x-access-token', user.token)
+        .end((err, res) => {
+          expect(res.status).to.equal(400)
+          expect(res.body[0].msg).to.equal('"1a2s3d4q" is an invalid ObjectId.')
+          done(err)
+        })
+    })
   })
 
 })

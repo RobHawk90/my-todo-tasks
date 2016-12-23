@@ -36,7 +36,7 @@ module.exports = () => {
     let id = req.params.id
     let task = req.body
 
-    req.checkParams('id', `"${id}" is an invalid ObjectId`).isObjectId()
+    req.checkParams('id', `"${id}" is an invalid ObjectId.`).isObjectId()
     req.check('description', "Task's description is required.").notEmpty()
     req.check('date', `Task's date "${task.date}" is invalid. Must be "yyyy-mm-dd" format.`).isDate()
     req.check('userId', 'User not found.').isObjectId()
@@ -61,6 +61,26 @@ module.exports = () => {
       })
       .then(taskUpdated => res.json(taskUpdated))
       .catch(error => res.status(500).send(error))
+  }
+
+  ctrl.remove = (req, res) => {
+    let id = req.params.id
+
+    req.checkParams('id', `"${id}" is an invalid ObjectId.`).isObjectId()
+
+    let errors = req.validationErrors()
+
+    if(errors) {
+      res.status(400).json(errors)
+      return
+    }
+
+    Task.remove({_id: id})
+      .then(task => res.sendStatus(204))
+      .catch(error => {
+        console.log(error)
+        res.status(500).send(error)
+      })
   }
 
   return ctrl
