@@ -60,7 +60,10 @@ module.exports = () => {
         res.sendStatus(404)
       })
       .then(taskUpdated => res.json(taskUpdated))
-      .catch(error => res.status(500).send(error))
+      .catch(error => {
+        console.log(error)
+        res.status(500).send(error)
+      })
   }
 
   ctrl.remove = (req, res) => {
