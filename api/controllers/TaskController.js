@@ -6,13 +6,8 @@ module.exports = () => {
   let ctrl = {}
 
   ctrl.insert = (req, res) => {
-    let task = req.body
-
-    req.check('description', "Task's description is required.").notEmpty()
-    req.check('date', `Task's date "${task.date}" is invalid. Must be "yyyy-mm-dd" format.`).isDate()
-    req.check('userId', 'User not found.').isObjectId()
-
-    let errors = req.validationErrors()
+    let task = getTask(req)
+    let errors = getValidationErrors(req)
 
     if(errors) {
       res.status(400).json(errors)
@@ -34,14 +29,11 @@ module.exports = () => {
 
   ctrl.update = (req, res) => {
     let id = req.params.id
-    let task = req.body
+    let task = getTask(req)
 
     req.checkParams('id', `"${id}" is an invalid ObjectId.`).isObjectId()
-    req.check('description', "Task's description is required.").notEmpty()
-    req.check('date', `Task's date "${task.date}" is invalid. Must be "yyyy-mm-dd" format.`).isDate()
-    req.check('userId', 'User not found.').isObjectId()
 
-    let errors = req.validationErrors()
+    let errors = getValidationErrors(req)
 
     if(errors) {
       res.status(400).json(errors)
@@ -51,15 +43,15 @@ module.exports = () => {
     User.findOne({_id: task.userId})
       .then(userFound => {
         if(userFound)
-          return Task.findOne({_id: id})
+          return Task.findOneAndUpdate({_id: id}, task)
         res.status(400).json([{msg: 'User not found.'}])
       })
-      .then(taskFound => {
-        if(taskFound)
-          return Task.where({_id: id}).update(task)
-        res.sendStatus(404)
+      .then(taskUpdated => {
+        if(taskUpdated)
+          res.json(taskUpdated)
+        else
+          res.sendStatus(404)
       })
-      .then(taskUpdated => res.json(taskUpdated))
       .catch(error => {
         console.log(error)
         res.status(500).send(error)
@@ -84,6 +76,19 @@ module.exports = () => {
         console.log(error)
         res.status(500).send(error)
       })
+  }
+
+  function getValidationErrors(req) {
+    let task = req.body
+    req.check('description', "Task's description is required.").notEmpty()
+    req.check('date', `Task's date "${task.date}" is invalid. Must be "yyyy-mm-dd" format.`).isDate()
+    req.check('userId', 'User not found.').isObjectId()
+    return req.validationErrors()
+  }
+
+  function getTask(req) {
+    delete req.body._id
+    return req.body
   }
 
   return ctrl
